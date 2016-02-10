@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ssh-keygen -A
+/usr/sbin/sshd &
+exec dockerd-entrypoint.sh -s overlay
