@@ -15,21 +15,6 @@
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
   <clouds>
-    <com.nirima.jenkins.plugins.docker.DockerCloud plugin="docker-plugin@0.16.0">
-      <name>local</name>
-      <templates class="empty-list"/>
-      <serverUrl>unix://var/run/docker.sock</serverUrl>
-      <connectTimeout>0</connectTimeout>
-      <readTimeout>0</readTimeout>
-      <credentialsId></credentialsId>
-      <containerCap>100</containerCap>
-    </com.nirima.jenkins.plugins.docker.DockerCloud>
-    <org.jenkinci.plugins.mock__slave.MockCloud>
-      <name>mock</name>
-      <mode>NORMAL</mode>
-      <numExecutors>1</numExecutors>
-      <labelString></labelString>
-    </org.jenkinci.plugins.mock__slave.MockCloud>
   </clouds>
   <quietPeriod>5</quietPeriod>
   <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
