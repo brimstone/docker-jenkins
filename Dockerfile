@@ -2,6 +2,8 @@ FROM docker:dind
 
 EXPOSE 8080
 
+ENTRYPOINT ["/usr/bin/tini", "--", "/bin/jenkins"]
+
 # tini
 RUN apk add --update \
     --repository http://dl-1.alpinelinux.org/alpine/edge/testing/ \
@@ -34,19 +36,27 @@ WORKDIR /var/jenkins_home
 #VOLUME /var/jenkins_home
 
 RUN /bin/jenkins 2>&1 | tee /tmp/jenkins.log \
-  & sleep 1; tail -f /tmp/jenkins.log | grep -qm 1 'Completed initialization' \
- && curl http://localhost:8080/jnlpJars/jenkins-cli.jar -O \
+  & printf "\n\nWaiting for jenkins to initialize\n" \
+ && sleep 1; tail -f /tmp/jenkins.log | grep -qm 1 'Completed initialization' \
+ && printf "\n\nDownloading jenkins-cli\n" \
+ && curl -s http://localhost:8080/jnlpJars/jenkins-cli.jar -O \
+ && printf "\n\nUpdating jenkins plugins\n" \
  && jenkins-cli list-plugins | awk '/)$/ {print $1}' \
   | xargs -n 1 jenkins-cli install-plugin \
+ && printf "\n\nInstalling extra plugins\n" \
  && jenkins-cli install-plugin workflow-aggregator \
  && jenkins-cli install-plugin workflow-multibranch \
  && jenkins-cli install-plugin docker-workflow \
  && jenkins-cli install-plugin git \
  && jenkins-cli install-plugin docker-plugin \
  && jenkins-cli install-plugin mock-slave \
- && jenkins-cli safe-shutdown
+ && printf "\n\nRestarting Jenkins\n" \
+ && jenkins-cli safe-restart \
+ && printf "\n\nWaiting for jenkins to initialize\n" \
+ && sleep 1; tail -f /tmp/jenkins.log | grep -qm 1 'Completed initialization' \
+ && jenkins-cli list-plugins | sort \
+ && jenkins-cli safe-shutdown \
+ && sleep 5
 #  ; rm /tmp/jenkins.log
 
 COPY config.xml /var/jenkins_home/config.xml
-
-ENTRYPOINT ["/usr/bin/tini", "--", "/bin/jenkins"]
