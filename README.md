@@ -14,3 +14,15 @@ Usage
   - Set a Name
   - Set a Project Repository
   - Set Periodically if not otherwise run to something
+
+Jenkinsfile
+===========
+
+Simple example:
+```
+docker.image("busybox").inside {
+	sh "busybox"
+}
+```
+
+More information in [Cloudbees Documentation](http://documentation.cloudbees.com/docs/cje-user-guide/docker-workflow-sect-inside.html)
