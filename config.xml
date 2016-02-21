@@ -24,7 +24,7 @@
           <launcher class="com.nirima.jenkins.plugins.docker.launcher.DockerComputerSSHLauncher">
             <sshConnector plugin="ssh-slaves@1.10">
               <port>22</port>
-              <credentialsId>07084dec-e8b0-4047-9935-28af67accecd</credentialsId>
+              <credentialsId>slave-dind</credentialsId>
               <jvmOptions></jvmOptions>
               <javaPath></javaPath>
               <maxNumRetries>0</maxNumRetries>
