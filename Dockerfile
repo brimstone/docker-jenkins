@@ -11,12 +11,16 @@ RUN apk add --update \
     runit openjdk8-jre ttf-dejavu git bash \
  && rm -rf /var/cache/apk/*
 
+# docker
+
+ENV DOCKER_OPTS "--host=unix:///var/run/docker.sock --storage-driver=overlay"
+
 # jenkins
-#ENV JENKINS_UC=https://updates.jenkins-ci.org
 
-ENV JENKINS_HOME=/var/jenkins_home
+ENV JENKINS_HOME /var/jenkins_home
 
-RUN adduser -h "$JENKINS_HOME" -u 1000 -s /bin/sh -D jenkins
+RUN addgroup docker \
+ && adduser -h "$JENKINS_HOME" -u 1000 -s /bin/sh -D -G docker jenkins jenkins
 
 RUN mkdir -p /usr/share/jenkins/ref \
  && curl -fL \
