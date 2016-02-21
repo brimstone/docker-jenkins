@@ -7,7 +7,7 @@ EXPOSE 22
 RUN apk -U add openssh openjdk8-jre bash \
  && addgroup docker \
  && adduser -h "/home/jenkins" -u 1000 -s /bin/sh -D jenkins -G docker \
- && echo "jenkins:" | chpasswd \
+ && echo "jenkins:jenkins" | chpasswd \
  && echo "PermitEmptyPasswords yes" >> /etc/ssh/sshd_config \
  && ln -s /usr/local/bin/docker /usr/bin/docker
 
