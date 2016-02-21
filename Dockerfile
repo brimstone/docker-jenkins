@@ -2,17 +2,17 @@ FROM docker:dind
 
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/bin/tini", "--", "/bin/jenkins"]
+ENTRYPOINT ["/sbin/runsvdir", "/service"]
 
 # tini
 RUN apk add --update \
     --repository http://dl-1.alpinelinux.org/alpine/edge/testing/ \
     --repository http://dl-1.alpinelinux.org/alpine/edge/community/ \
-    tini openjdk8-jre ttf-dejavu git bash \
+    runit openjdk8-jre ttf-dejavu git bash \
  && rm -rf /var/cache/apk/*
 
 # jenkins
-ENV JENKINS_UC=https://updates.jenkins-ci.org
+#ENV JENKINS_UC=https://updates.jenkins-ci.org
 
 ENV JENKINS_HOME=/var/jenkins_home
 
@@ -28,18 +28,14 @@ COPY jenkins /bin/
 
 COPY jenkins-cli /bin/
 
-# site specific stuff
-USER jenkins
-
-WORKDIR /var/jenkins_home
-
 #VOLUME /var/jenkins_home
 
-RUN /bin/jenkins 2>&1 | tee /tmp/jenkins.log \
+RUN cd "$JENKINS_HOME" \
+ && /bin/jenkins 2>&1 | tee /tmp/jenkins.log \
   & printf "\n\nWaiting for jenkins to initialize\n" \
  && sleep 1; tail -f /tmp/jenkins.log | grep -qm 1 'Completed initialization' \
  && printf "\n\nDownloading jenkins-cli\n" \
- && curl -s http://localhost:8080/jnlpJars/jenkins-cli.jar -O \
+ && curl -s http://localhost:8080/jnlpJars/jenkins-cli.jar > /bin/jenkins-cli.jar \
  && printf "\n\nUpdating jenkins plugins\n" \
  && jenkins-cli list-plugins | awk '/)$/ {print $1}' \
   | xargs -n 1 jenkins-cli install-plugin \
@@ -52,11 +48,15 @@ RUN /bin/jenkins 2>&1 | tee /tmp/jenkins.log \
  && jenkins-cli install-plugin mock-slave \
  && printf "\n\nRestarting Jenkins\n" \
  && jenkins-cli safe-restart \
+ && sleep 15 \
  && printf "\n\nWaiting for jenkins to initialize\n" \
- && sleep 1; tail -f /tmp/jenkins.log | grep -qm 1 'Completed initialization' \
- && jenkins-cli list-plugins | sort \
+ && until jenkins-cli list-plugins 2>/dev/null; do sleep 1; done | sort \
  && jenkins-cli safe-shutdown \
  && sleep 5
 #  ; rm /tmp/jenkins.log
 
-COPY config.xml /var/jenkins_home/config.xml
+COPY config.xml "$JENKINS_HOME"/config.xml
+
+COPY service /service
+
+RUN chown -R jenkins: "$JENKINS_HOME"
