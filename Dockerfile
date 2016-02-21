@@ -52,16 +52,16 @@ RUN cd "$JENKINS_HOME" \
  && jenkins-cli install-plugin mock-slave \
  && printf "\n\nAdding SSH Creds\n" \
  && curl -XPOST 'localhost:8080/credential-store/domain/_/createCredentials' \
-  --data-urlencode 'json={
-      "": "0",
-      "credentials": {
-          "scope": "GLOBAL",
-          "id": "slave-dind",
-          "username": "jenkins",
-          "password": "jenkins",
-          "description": "slave-dind",
-          "$class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
-      }
+  --data-urlencode 'json={ \
+      "": "0", \
+      "credentials": { \
+          "scope": "GLOBAL", \
+          "id": "slave-dind", \
+          "username": "jenkins", \
+          "password": "jenkins", \
+          "description": "slave-dind", \
+          "$class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl" \
+      } \
   }' \
  && printf "\n\nRestarting Jenkins\n" \
  && jenkins-cli safe-restart \
