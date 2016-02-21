@@ -1,4 +1,4 @@
-FROM docker:1.9.1-dind
+FROM docker:dind
 
 ENTRYPOINT ["/entrypoint"]
 
