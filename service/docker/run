@@ -1,2 +1,8 @@
 #!/bin/sh
+
+# If we're started with a DOCKER_HOST variable, don't start dockerd
+if [ -n "${DOCKER_HOST:-}" ]; then
+	sv stop "$PWD"
+	exit
+fi
 exec docker daemon $DOCKER_OPTS
