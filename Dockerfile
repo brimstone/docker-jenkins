@@ -16,7 +16,7 @@ RUN apk add --update \
 ENV DOCKER_OPTS "--host=unix:///var/run/docker.sock --storage-driver=overlay"
 
 # jenkins
-
+ENV JENKINS_UC=https://updates.jenkins-ci.org
 ENV JENKINS_HOME /var/jenkins_home
 
 RUN addgroup docker \
