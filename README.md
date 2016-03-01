@@ -13,6 +13,7 @@ Usage
 - Add a Multibranch Pipeline project
   - Set a Name
   - Set a Project Repository
+    - This repo can be used to test.
   - Set Periodically if not otherwise run to something
 
 Jenkinsfile
