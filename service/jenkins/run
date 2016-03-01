@@ -1,2 +1,7 @@
 #!/bin/sh
+if ! [ -e "$JENKINS_HOME"/config.xml ]; then
+	echo "Restoring from packaged jenkins home"
+	tar -zxf /usr/share/jenkins/home.orig.tar.gz -C "$JENKINS_HOME"
+	cp /usr/share/jenkins/config.orig.xml "$JENKINS_HOME"/config.xml
+fi
 exec su -c /bin/jenkins jenkins

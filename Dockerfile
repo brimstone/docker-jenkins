@@ -69,11 +69,13 @@ RUN cd "$JENKINS_HOME" \
  && printf "\n\nWaiting for jenkins to initialize\n" \
  && until jenkins-cli list-plugins 2>/dev/null; do sleep 1; done | sort \
  && jenkins-cli safe-shutdown \
- && sleep 5
-#  ; rm /tmp/jenkins.log
+ && printf "\n\nWaiting for jenkins to shutdown\n" \
+ && while pgrep java; do sleep 1; done \
+ && chown -R jenkins: "$JENKINS_HOME" \
+ && printf "\n\nBacking up jenkins home directory\n" \
+ && tar -zcf /usr/share/jenkins/home.orig.tar.gz -C "$JENKINS_HOME" . \
+ && rm -rf "$JENKINS_HOME"/*
 
-COPY config.xml "$JENKINS_HOME"/config.xml
+COPY config.xml /usr/share/jenkins/config.orig.xml
 
 COPY service /service
-
-RUN chown -R jenkins: "$JENKINS_HOME"
