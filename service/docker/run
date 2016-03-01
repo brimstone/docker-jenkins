@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # If we're started with a DOCKER_HOST variable, don't start dockerd
-if [ -n "${DOCKER_HOST:-}" ]; then
+if [ "${DOCKER:-}" = "no" ]; then
 	sv stop "$PWD"
 	exit
 fi
