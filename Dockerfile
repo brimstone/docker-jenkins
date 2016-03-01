@@ -6,8 +6,8 @@ ENTRYPOINT ["/sbin/runsvdir", "/service"]
 
 # tini
 RUN apk add --update \
-    --repository http://dl-1.alpinelinux.org/alpine/edge/testing/ \
-    --repository http://dl-1.alpinelinux.org/alpine/edge/community/ \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
     runit openjdk8-jre ttf-dejavu git bash \
  && rm -rf /var/cache/apk/*
 
