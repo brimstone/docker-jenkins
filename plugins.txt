@@ -1,0 +1,6 @@
+workflow-aggregator
+workflow-multibranch
+docker-workflow
+git
+docker-plugin
+mock-slave

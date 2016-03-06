@@ -34,6 +34,8 @@ COPY jenkins-cli /bin/
 
 #VOLUME /var/jenkins_home
 
+COPY plugins.txt /plugins.txt
+
 RUN cd "$JENKINS_HOME" \
  && /bin/jenkins 2>&1 | tee /tmp/jenkins.log \
   & printf "\n\nWaiting for jenkins to initialize\n" \
@@ -44,12 +46,9 @@ RUN cd "$JENKINS_HOME" \
  && jenkins-cli list-plugins | awk '/)$/ {print $1}' \
   | xargs -n 1 jenkins-cli install-plugin \
  && printf "\n\nInstalling extra plugins\n" \
- && jenkins-cli install-plugin workflow-aggregator \
- && jenkins-cli install-plugin workflow-multibranch \
- && jenkins-cli install-plugin docker-workflow \
- && jenkins-cli install-plugin git \
- && jenkins-cli install-plugin docker-plugin \
- && jenkins-cli install-plugin mock-slave \
+ && while read -r aplugin; \
+ do jenkins-cli install-plugin "$aplugin" \
+ ; done < /plugins.txt \
  && printf "\n\nAdding SSH Creds\n" \
  && curl -XPOST 'localhost:8080/credential-store/domain/_/createCredentials' \
   --data-urlencode 'json={ \
@@ -79,3 +78,7 @@ RUN cd "$JENKINS_HOME" \
 COPY config.xml /usr/share/jenkins/config.orig.xml
 
 COPY service /service
+
+ONBUILD RUN while read -r aplugin; \
+ do jenkins-cli install-plugin "$aplugin" \
+ ; done < /plugins.txt \
