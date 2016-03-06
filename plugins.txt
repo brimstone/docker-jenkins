@@ -4,3 +4,4 @@ docker-workflow
 git
 docker-plugin
 mock-slave
+job-dsl
